@@ -1,0 +1,16 @@
+[
+	{
+		"base_block_storage_size": "50GB",
+		"cpu_count": 2,
+		"disk_type": "NET",
+		"generation_code": "G2",
+		"id": "SVR.VSVR.HICPU.C002.M004.NET.SSD.B050.G002",
+		"infra_resource_type": "VSVR",
+		"memory_size": "4GB",
+		"product_code": "SVR.VSVR.HICPU.C002.M004.NET.SSD.B050.G002",
+		"product_description": "vCPU 2EA, Memory 4GB, [SSD]Disk 50GB",
+		"product_name": "vCPU 2EA, Memory 4GB, [SSD]Disk 50GB",
+		"product_type": "HICPU",
+		"server_image_product_code": ""
+	}
+]
