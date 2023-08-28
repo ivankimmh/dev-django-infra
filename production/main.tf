@@ -159,3 +159,46 @@ resource "ncloud_public_ip" "be" {
 resource "ncloud_public_ip" "db" {
   server_instance_no = module.db.instance_no
 }
+
+
+resource "ssh_resource" "init_db" {
+  depends_on = [ module.db ] # after db server creation
+  when         = "create" # Default
+
+  host         = ncloud_public_ip.db.public_ip
+  user         = var.username
+  password     = var.password
+  timeout      = "1m"
+  retry_delay  = "5s"
+
+  file {
+    source = "${path.module}/set_db_server.sh"
+    destination = "/home/lion/set_db_server.sh"
+    permissions = "0700"
+  }
+
+  commands = [
+    "./set_db_server.sh",
+  ]
+}
+
+resource "ssh_resource" "init_be" {
+  depends_on = [ module.be ] # after be server creation
+  when         = "create" # Default
+
+  host         = ncloud_public_ip.be.public_ip
+  user         = var.username
+  password     = var.password
+  timeout      = "1m"
+  retry_delay  = "5s"
+
+  file {
+    source     = "${path.module}/set_be_server.sh"
+    destination = "/home/lion/set_be_server.sh"
+    permissions = "0700"
+  }
+
+  commands = [
+    "./set_be_server.sh",
+  ]
+}

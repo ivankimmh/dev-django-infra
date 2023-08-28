@@ -9,6 +9,10 @@ terraform {
     ncloud = {
       source = "NaverCloudPlatform/ncloud"
     }
+    ssh = {
+      source = "loafoe/ssh"
+      version = "2.6.0"
+    }
   }
   required_version = ">= 0.13"
 }
@@ -21,6 +25,8 @@ provider "ncloud" {
   site        = var.site
   support_vpc = var.support_vpc
 }
+
+provider "ssh" {}
 
 locals {
   env = "staging"
@@ -138,6 +144,7 @@ data "ncloud_server_products" "sm" {
   output_file = "product.json"
 }
 
+# public_ip 를 
 resource "ncloud_public_ip" "be" {
   server_instance_no = module.be.instance_no
 }
@@ -161,4 +168,46 @@ module "loadbalancer" {
   vpc_id = module.network.vpc_id
   be_server = module.be.instance_no
   subnet_be_loadbalancer = module.network.subnet_be_loadbalancer
+}
+
+resource "ssh_resource" "init_db" {
+  depends_on = [ module.db ] # after db server creation
+  when         = "create" # Default
+
+  host         = ncloud_public_ip.db.public_ip
+  user         = var.username
+  password     = var.password
+  timeout      = "1m"
+  retry_delay  = "5s"
+
+  file {
+    source = "${path.module}/set_db_server.sh"
+    destination = "/home/lion/set_db_server.sh"
+    permissions = "0700"
+  }
+
+  commands = [
+    "./set_db_server.sh",
+  ]
+}
+
+resource "ssh_resource" "init_be" {
+  depends_on = [ module.be ] # after be server creation
+  when         = "create" # Default
+
+  host         = ncloud_public_ip.be.public_ip
+  user         = var.username
+  password     = var.password
+  timeout      = "1m"
+  retry_delay  = "5s"
+
+  file {
+    source     = "${path.module}/set_be_server.sh"
+    destination = "/home/lion/set_be_server.sh"
+    permissions = "0700"
+  }
+
+  commands = [
+    "./set_be_server.sh",
+  ]
 }
