@@ -70,8 +70,8 @@ resource "ncloud_network_interface" "main" {
     description           = "for ${var.name} server"
     subnet_no             = var.subnet_be_server
     access_control_groups = [
-        data.ncloud_vpc.main.default_access_control_group_no,
-        ncloud_access_control_group.main.id,
+        data.ncloud_vpc.main.default_access_control_group_no, # default ACG
+        ncloud_access_control_group.main.id, # created ACG
     ]
 }
 
