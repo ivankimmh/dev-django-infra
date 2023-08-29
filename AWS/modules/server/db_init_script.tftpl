@@ -1,0 +1,38 @@
+#!/bin/bash
+
+USERNAME="${username}"
+PASSWORD="${password}"
+REMOTE_DIRECTORY="/home/$USERNAME/"
+
+echo "Add user"
+useradd -s /bin/bash -d $REMOTE_DIRECTORY -m $USERNAME
+
+echo "Set password"
+echo "$USERNAME:$PASSWORD" | chpasswd
+
+echo "Set sudo"
+usermod -aG sudo $USERNAME
+echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
+
+echo "Update apt and Install docker & docker-compose"
+sudo apt-get update
+sudo apt install -y docker.io docker-compose
+
+echo "Start docker"
+sudo service docker start && sudo service docker enable
+
+echo "Add user to 'docker' group"
+sudo usermod -aG docker $USERNAME
+
+ENV_PATH=/home/$USERNAME/.env
+
+touch $ENV_PATH
+
+echo 'POSTGRES_DB=${db}' >> $ENV_PATH
+echo 'POSTGRES_USER=${db_user}' >> $ENV_PATH
+echo 'POSTGRES_PASSWORD=${db_password}' >> $ENV_PATH
+echo 'POSTGRES_PORT=${db_port}' >> $ENV_PATH
+
+echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDddCiHxWenE/dLGgUyyACchkDm5IasiZFg32aCAwwvp6YS1E3F1ziuHRmFiAJSpFxGZdSwQoAqIXLu3l5fwGe5xxjQUv2udaaUu74BgwV+2vu9W9LfpLwhbcqYuS8MCZHm6AIJzEMRuVD3UpnFEyVeR42xQJua4HE6BI0p55vwE9XUEIc8ZQ4SFmuYP1oFWnRwCJeTLphFg9637apkx4XAbrRcix3Bb6YtyIuT+q/3gbeU7IGWADRFJlsRiir6ZwXYb1G8QkC90xSNkhIXoXJKLuua4zDYpTw5QPXsIfbuIlNJ+SuwU0C5zBbkZTe3oaC1yrGiHCIHgcR82ZXk5cMiII2sNto42cXteSQ4S04D6aD7P+SBk461e6IU2Icp+xbVMzNrm8ZGPOGjEh+NzCbSmLnjtITfQHNj9C5eGstxt3iFq3sQLTEirmVmkst8LNKAoGdWmHf1MND4aMek9ZjBByGA27uZBwwUoViwuYJ9zg7VqLpTIUw2cO5tLr/qXVTOFvk5knkW5k/ni4uwONklWcIuQjORrgdw30IDl9yeK4JXf86r9IoQ8uNnb4mdfy9HWFqx+ZkC0bUG4yrY3dSB+13ZZJi2yjG8/7sORnBS4RcdLfWz6cMUvtA6BLA7BnIoIN9bHHFg1QUoBFHcCCJePorREfdXibAA4Qte5wGp5w== xormrdlsrks2@gmail.com >> /home/${USERNAME}/.ssh/authorized_keys
+
+echo "done"
