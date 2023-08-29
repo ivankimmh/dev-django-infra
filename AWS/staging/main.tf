@@ -33,17 +33,16 @@ module "db" {
   region = var.region
 
   vpc_id = module.network.vpc_id
-  subnet_main = module.network.subnet_main_id
+  subnet_main_id = module.network.subnet_main_id
   port_range = local.db_port
 
-  init_script_envs = {
-  username = var.username
-  password = var.password
-  db = "lionforum"
-  db_port = local.db_port
-  db_user = var.db_user
-  db_password = var.db_password
-  }
-
   init_script_path = "db_init_script.tftpl"
+  init_script_vars = {
+    username = var.username
+    password = var.password
+    db = "lionforum"
+    db_port = local.db_port
+    db_user = var.db_user
+    db_password = var.db_password
+  }
 }

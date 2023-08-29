@@ -12,12 +12,12 @@ provider "aws" {
   region = var.region
 }
 
-data "vpc_id" "main" {
+data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-data "subnet_main" "main" {
-  id = var.subnet_main
+data "aws_subnet" "main" {
+  id = var.subnet_main_id
 }
 
 data "aws_ami" "ubuntu" {
@@ -43,8 +43,9 @@ resource "aws_instance" "main" {
     aws_security_group.main.id
   ]
   
-  user_data = templatefile("${path.module}/${var.init_script_path}", var.init_script_envs)
+  user_data = templatefile("${path.module}/${var.init_script_path}", var.init_script_vars)
   associate_public_ip_address = true
+  user_data_replace_on_change = true
   
   tags = {
     Name = "${var.name}-server-${var.env}"
@@ -54,7 +55,7 @@ resource "aws_instance" "main" {
 resource "aws_security_group" "main" {
   name        = "lion-${var.name}-${var.env}"
   description = "Allow SSH, ${var.port_range} inbound traffic"
-  vpc_id      = data.vpc_id.main.id
+  vpc_id      = data.aws_vpc.main.id
 
   # inbound
   ingress {
