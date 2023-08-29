@@ -41,8 +41,3 @@ variable "init_script_path" {
 variable "init_script_envs" {
   type = map(any)
 }
-
-# acg_port_range
-variable "port_range" {
-  type = string
-}

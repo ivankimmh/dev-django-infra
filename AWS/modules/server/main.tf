@@ -9,14 +9,7 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-    default_tags {
-      tags = {
-        Env = var.env
-      }
-    }
   region = var.region
-  access_key = var.access_key
-  secret_key = var.secret_key
 }
 
 data "vpc_id" "main" {
@@ -45,7 +38,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "main" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  subnet_id = var.subnet_main
+  subnet_id = var.subnet_main_id
   vpc_security_group_ids = [
     aws_security_group.main.id
   ]
@@ -63,6 +56,7 @@ resource "aws_security_group" "main" {
   description = "Allow SSH, ${var.port_range} inbound traffic"
   vpc_id      = data.vpc_id.main.id
 
+  # inbound
   ingress {
     description      = "${var.port_range} from VPC"
     from_port        = var.port_range
@@ -71,6 +65,7 @@ resource "aws_security_group" "main" {
     cidr_blocks      = ["0.0.0.0/0"]
   }
   
+  # inbound
   ingress {
     description      = "SSH"
     from_port        = 22
@@ -79,6 +74,7 @@ resource "aws_security_group" "main" {
     cidr_blocks      = ["0.0.0.0/0"]
   }
 
+  # outbound
   egress {
     from_port        = 0
     to_port          = 0

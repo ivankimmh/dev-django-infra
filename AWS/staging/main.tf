@@ -9,14 +9,7 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-    default_tags {
-      tags = {
-        Env = local.env
-      }
-    }
   region = var.region
-  access_key = var.access_key
-  secret_key = var.secret_key
 }
 
 locals {
@@ -30,8 +23,6 @@ module "network" {
 
   env = local.env
   region = var.region
-  access_key = var.access_key
-  secret_key = var.secret_key 
 }
 
 module "db" {
@@ -41,11 +32,8 @@ module "db" {
   name = "db"
   region = var.region
 
-  access_key = var.access_key
-  secret_key = var.secret_key 
-
   vpc_id = module.network.vpc_id
-  subnet_main = module.network.subnet_main
+  subnet_main = module.network.subnet_main_id
   port_range = local.db_port
 
   init_script_envs = {

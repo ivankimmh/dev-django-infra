@@ -9,14 +9,7 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-    default_tags {
-      tags = {
-        Env = var.env
-      }
-    }
   region = var.region
-  access_key = var.access_key
-  secret_key = var.secret_key
 }
 
 # Create a VPC
@@ -24,7 +17,7 @@ resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    Name = "lion-${var.env}"
+    Name = "main-${var.env}"
   }
 }
 
@@ -32,9 +25,10 @@ resource "aws_subnet" "main" {
   vpc_id     = aws_vpc.main.id
   cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, 1)
   map_public_ip_on_launch = true
+  availability_zone = "ap-northeast-2a"
 
   tags = {
-    Name = "main"
+    Name = "Main"
     Env = var.env
   }
 }
