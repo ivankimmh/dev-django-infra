@@ -2,16 +2,6 @@ variable "region" {
   type = string
 }
 
-# variable "access_key" {
-#   type = string
-#   sensitive = true
-# }
-
-# variable "secret_key" {
-#   type = string
-#   sensitive = true
-# }
-
 # instance setup
 variable "username" {
   type = string
@@ -34,6 +24,34 @@ variable "db_password" {
   sensitive = true
 }
 variable "db_port" {
+  type = string
+  sensitive = true
+}
+
+# NCP
+variable "NCP_ACCESS_KEY" {
+  type = string
+}
+
+variable "NCP_SECRET_KEY" {
+  type = string
+  sensitive = true
+}
+
+variable "NCP_CONTAINER_REGISTRY" {
+  type = string
+}
+
+variable "IMAGE_TAG" {
+  type = string
+}
+
+# Django
+variable "DJANGO_SETTINGS_MODULE" {
+  type = string
+}
+
+variable "DJANGO_SECRET_KEY" {
   type = string
   sensitive = true
 }

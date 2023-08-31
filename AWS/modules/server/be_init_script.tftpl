@@ -40,4 +40,30 @@ echo 'IMAGE_TAG=${IMAGE_TAG}' >> $ENV_PATH
 echo 'DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}' >> $ENV_PATH
 echo 'DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}' >> $ENV_PATH
 
+mkdir /home/$USERNAME/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDddCiHxWenE/dLGgUyyACchkDm5IasiZFg32aCAwwvp6YS1E3F1ziuHRmFiAJSpFxGZdSwQoAqIXLu3l5fwGe5xxjQUv2udaaUu74BgwV+2vu9W9LfpLwhbcqYuS8MCZHm6AIJzEMRuVD3UpnFEyVeR42xQJua4HE6BI0p55vwE9XUEIc8ZQ4SFmuYP1oFWnRwCJeTLphFg9637apkx4XAbrRcix3Bb6YtyIuT+q/3gbeU7IGWADRFJlsRiir6ZwXYb1G8QkC90xSNkhIXoXJKLuua4zDYpTw5QPXsIfbuIlNJ+SuwU0C5zBbkZTe3oaC1yrGiHCIHgcR82ZXk5cMiII2sNto42cXteSQ4S04D6aD7P+SBk461e6IU2Icp+xbVMzNrm8ZGPOGjEh+NzCbSmLnjtITfQHNj9C5eGstxt3iFq3sQLTEirmVmkst8LNKAoGdWmHf1MND4aMek9ZjBByGA27uZBwwUoViwuYJ9zg7VqLpTIUw2cO5tLr/qXVTOFvk5knkW5k/ni4uwONklWcIuQjORrgdw30IDl9yeK4JXf86r9IoQ8uNnb4mdfy9HWFqx+ZkC0bUG4yrY3dSB+13ZZJi2yjG8/7sORnBS4RcdLfWz6cMUvtA6BLA7BnIoIN9bHHFg1QUoBFHcCCJePorREfdXibAA4Qte5wGp5w== xormrdlsrks2@gmail.com" >> /home/$USERNAME/.ssh/authorized_keys
+
 echo "done"
+
+#0. source env file
+source $ENV_PATH
+
+#1. docker login
+docker login \
+    $NCP_CONTAINER_REGISTRY \
+    --username $NCP_ACCESS_KEY \
+    --password $NCP_SECRET_KEY
+
+
+#2. docker pull
+docker pull $IMAGE_TAG
+
+#3. docker run
+docker run -p 8000:8000 -d \
+    -v ~/.aws:/root/.aws:ro \
+    --env-file $ENV_PATH \
+    --name lion-app \
+    $IMAGE_TAG
+
+#4. check docker
+docker ps

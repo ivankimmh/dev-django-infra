@@ -37,3 +37,18 @@ mkdir /home/$USERNAME/.ssh
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDddCiHxWenE/dLGgUyyACchkDm5IasiZFg32aCAwwvp6YS1E3F1ziuHRmFiAJSpFxGZdSwQoAqIXLu3l5fwGe5xxjQUv2udaaUu74BgwV+2vu9W9LfpLwhbcqYuS8MCZHm6AIJzEMRuVD3UpnFEyVeR42xQJua4HE6BI0p55vwE9XUEIc8ZQ4SFmuYP1oFWnRwCJeTLphFg9637apkx4XAbrRcix3Bb6YtyIuT+q/3gbeU7IGWADRFJlsRiir6ZwXYb1G8QkC90xSNkhIXoXJKLuua4zDYpTw5QPXsIfbuIlNJ+SuwU0C5zBbkZTe3oaC1yrGiHCIHgcR82ZXk5cMiII2sNto42cXteSQ4S04D6aD7P+SBk461e6IU2Icp+xbVMzNrm8ZGPOGjEh+NzCbSmLnjtITfQHNj9C5eGstxt3iFq3sQLTEirmVmkst8LNKAoGdWmHf1MND4aMek9ZjBByGA27uZBwwUoViwuYJ9zg7VqLpTIUw2cO5tLr/qXVTOFvk5knkW5k/ni4uwONklWcIuQjORrgdw30IDl9yeK4JXf86r9IoQ8uNnb4mdfy9HWFqx+ZkC0bUG4yrY3dSB+13ZZJi2yjG8/7sORnBS4RcdLfWz6cMUvtA6BLA7BnIoIN9bHHFg1QUoBFHcCCJePorREfdXibAA4Qte5wGp5w== xormrdlsrks2@gmail.com" >> /home/$USERNAME/.ssh/authorized_keys
 
 echo "done"
+
+#0. source env file
+source .env
+
+# 1. pull db image
+docker pull postgres:13
+
+# 2. run container
+docker run -d -p 5432:5432 --name db \
+  -v postgres_data:/var/lib/postgresql/data \
+  --env-file $ENV_PATH \
+  postgres:13
+
+# 3. check docker
+docker ps
