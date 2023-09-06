@@ -44,7 +44,7 @@ resource "ncloud_subnet" "subnet" {
   subnet         = cidrsubnet(ncloud_vpc.vpc.ipv4_cidr_block, 8, 5)
   zone           = "KR-1"
   network_acl_no = ncloud_vpc.vpc.default_network_acl_no
-  subnet_type    = "PRIVATE"
+  subnet_type    = "PUBLIC"
   name           = "k8s-subnet-01"
   usage_type     = "GEN"
 }
@@ -81,6 +81,7 @@ resource "ncloud_nks_cluster" "cluster" { # minikube 로 했었던 클러스터
   lb_private_subnet_no        = ncloud_subnet.subnet_lb.id
   kube_network_plugin         = "cilium"
   subnet_no_list              = [ ncloud_subnet.subnet.id ]
+  public_network              = true
   vpc_no                      = ncloud_vpc.vpc.id
   zone                        = "KR-1"
   log {
@@ -127,11 +128,15 @@ resource "ncloud_nks_node_pool" "node_pool" {
   node_pool_name = "k8s-node-pool"
   node_count     = 1
   product_code   = data.ncloud_server_product.product.product_code
-  subnet_no      = [ncloud_subnet.subnet.id]
+#   subnet_no      = [ ncloud_subnet.subnet.id ]
+
   autoscale {
     enabled = true
     min = 1
     max = 2
+  }
+  lifecycle {
+    ignore_changes = [ node_count, subnet_no_list ]
   }
 }
 
