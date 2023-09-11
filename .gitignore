@@ -37,3 +37,4 @@ terraform.rc
 
 # lock file
 .terraform.lock.hcl
+kubectl

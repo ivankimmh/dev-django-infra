@@ -1,10 +1,4 @@
 terraform {
-  backend "local" {
-    path = "/Users/kimminhyeok/workspace/terraform_study/states/staging.tfstate"
-  }
-
-  # backend "pg" {}
-
   required_providers {
     ncloud = {
       source = "NaverCloudPlatform/ncloud"
@@ -17,7 +11,6 @@ terraform {
   required_version = ">= 0.13"
 }
 
-// Configure the ncloud provider
 provider "ncloud" {
   access_key  = var.NCP_ACCESS_KEY
   secret_key  = var.NCP_SECRET_KEY
@@ -30,8 +23,6 @@ provider "ssh" {}
 
 locals {
   env = "k8s"
-  db = "lionforum"
-  db_port = "5432"
 }
 
 resource "ncloud_vpc" "vpc" {
